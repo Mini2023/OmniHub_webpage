@@ -106,65 +106,24 @@ function HeroSection() {
           transition={{ duration: 0.5 }}
           className="mb-8"
         >
-          <div className="relative inline-block">
-            <svg
-              className="absolute inset-0 w-full h-full hidden md:block"
-              viewBox="0 0 800 200"
-              preserveAspectRatio="none"
-              style={{ pointerEvents: 'none' }}
+          <div className="relative inline-block py-2">
+            <h1
+              className="text-6xl md:text-9xl font-bold tracking-tight mb-6"
             >
-              <defs>
-                <linearGradient id="titleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <motion.stop
-                    offset="0%"
-                    animate={{
-                      stopColor: ['#f0f9ff', '#e0f2fe', '#f0f9ff'],
-                    }}
-                    transition={{ duration: 5, repeat: Infinity }}
-                  />
-                  <motion.stop
-                    offset="100%"
-                    animate={{
-                      stopColor: ['#e0f2fe', '#f0f9ff', '#e0f2fe'],
-                    }}
-                    transition={{ duration: 5, repeat: Infinity }}
-                  />
-                </linearGradient>
-                <mask id="textMask">
-                  <text
-                    x="400"
-                    y="150"
-                    textAnchor="middle"
-                    fontSize="180"
-                    fontWeight="bold"
-                    fill="white"
-                    fontFamily="system-ui, -apple-system, sans-serif"
-                    letterSpacing="-0.02em"
-                  >
-                    {text}
-                  </text>
-                </mask>
-              </defs>
-              <rect
-                width="800"
-                height="200"
-                fill="url(#titleGradient)"
-                mask="url(#textMask)"
-              />
-            </svg>
-
-            <h1 className="text-6xl md:text-9xl font-bold tracking-tight mb-6 text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-600">
               {text.split('').map((char, index) => (
                 <motion.span
                   key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0, y: 50, rotateX: -90, filter: 'blur(10px)' }}
+                  animate={{ opacity: 1, y: 0, rotateX: 0, filter: 'blur(0px)', backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
                   transition={{
-                    duration: 0.5,
-                    delay: index * 0.1,
-                    ease: [0.6, 0.01, 0.05, 0.95],
+                    opacity: { duration: 0.8, delay: index * 0.1 },
+                    y: { duration: 0.8, delay: index * 0.1, ease: [0.6, 0.01, 0.05, 0.95] },
+                    rotateX: { duration: 0.8, delay: index * 0.1, ease: [0.6, 0.01, 0.05, 0.95] },
+                    filter: { duration: 0.8, delay: index * 0.1 },
+                    backgroundPosition: { duration: 8, repeat: Infinity, ease: 'linear' }
                   }}
-                  className="inline-block"
+                  className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-blue-800 via-indigo-900 to-blue-900"
+                  style={{ transformOrigin: 'bottom', display: 'inline-block', position: 'relative', backgroundSize: '200% auto' }}
                 >
                   {char}
                 </motion.span>
