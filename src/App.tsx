@@ -1,6 +1,6 @@
-import { motion, useScroll, useTransform, useSpring, useInView } from 'framer-motion';
+import { motion, useSpring, useInView } from 'framer-motion';
 import { useRef, useState, useEffect } from 'react';
-import { Download, Sparkles, Zap, Rocket, Github, FileText } from 'lucide-react';
+import { Download, Sparkles, Zap, Rocket, Github, FileText, LucideIcon } from 'lucide-react';
 
 function App() {
   return (
@@ -36,7 +36,7 @@ function MeshBackground() {
       />
 
       <svg
-        className="absolute inset-0 w-full h-full opacity-20"
+        className="absolute inset-0 w-full h-full opacity-20 hidden md:block"
         viewBox="0 0 1200 800"
         preserveAspectRatio="none"
       >
@@ -108,7 +108,7 @@ function HeroSection() {
         >
           <div className="relative inline-block">
             <svg
-              className="absolute inset-0 w-full h-full"
+              className="absolute inset-0 w-full h-full hidden md:block"
               viewBox="0 0 800 200"
               preserveAspectRatio="none"
               style={{ pointerEvents: 'none' }}
@@ -153,7 +153,7 @@ function HeroSection() {
               />
             </svg>
 
-            <h1 className="text-8xl md:text-9xl font-bold tracking-tight mb-6 text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-600">
+            <h1 className="text-6xl md:text-9xl font-bold tracking-tight mb-6 text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-600">
               {text.split('').map((char, index) => (
                 <motion.span
                   key={index}
@@ -379,7 +379,7 @@ function CoreFeatures() {
       title: 'Universal Converter',
       description: 'Konvertiere jedes Format. MP4, PNG, MP3, PDF - alle Formate unterstützt.',
       color: 'from-amber-500/20 to-orange-500/20',
-      span: 'col-span-2',
+      span: 'col-span-1 md:col-span-2',
       delay: 0,
     },
     {
@@ -403,7 +403,7 @@ function CoreFeatures() {
       title: 'Image Processing',
       description: 'Automatische Bildoptimierung, Zuschnitt, Filter - alles in Sekunden.',
       color: 'from-green-500/20 to-emerald-500/20',
-      span: 'col-span-2',
+      span: 'col-span-1 md:col-span-2',
       delay: 0.3,
     },
     {
@@ -411,7 +411,7 @@ function CoreFeatures() {
       title: 'Und vieles mehr...',
       description: 'App Launcher • KI-Assistent • System-Health • Batch Processing • Optimierung',
       color: 'from-gray-500/20 to-slate-500/20',
-      span: 'col-span-3',
+      span: 'col-span-1 md:col-span-3',
       delay: 0.4,
       isMore: true,
     },
@@ -442,7 +442,17 @@ function CoreFeatures() {
   );
 }
 
-function BentoFeatureCard({ feature, isInView }: { feature: any; isInView: boolean }) {
+interface Feature {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  color: string;
+  span: string;
+  delay: number;
+  isMore?: boolean;
+}
+
+function BentoFeatureCard({ feature, isInView }: { feature: Feature; isInView: boolean }) {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
 
