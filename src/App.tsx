@@ -91,6 +91,144 @@ function MeshBackground() {
   );
 }
 
+function HeroParticles() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animationFrameId: number;
+    let particles: Particle[] = [];
+
+    const mouse = { x: -1000, y: -1000 };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+    };
+
+    const handleMouseLeave = () => {
+      mouse.x = -1000;
+      mouse.y = -1000;
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseout', handleMouseLeave);
+
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      initParticles();
+    };
+
+    window.addEventListener('resize', resize);
+
+    class Particle {
+      x: number;
+      y: number;
+      size: number;
+      vx: number;
+      vy: number;
+      color: string;
+
+      constructor() {
+        this.x = Math.random() * canvas!.width;
+        this.y = Math.random() * canvas!.height;
+        this.size = Math.random() * 2 + 0.5;
+        this.vx = (Math.random() - 0.5) * 0.5;
+        this.vy = (Math.random() - 0.5) * 0.5;
+
+        const colors = [
+          'rgba(56, 189, 248, 0.8)', // sky
+          'rgba(139, 92, 246, 0.8)', // violet
+          'rgba(168, 85, 247, 0.8)'  // purple
+        ];
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+
+        if (this.x < 0) this.x = canvas!.width;
+        if (this.x > canvas!.width) this.x = 0;
+        if (this.y < 0) this.y = canvas!.height;
+        if (this.y > canvas!.height) this.y = 0;
+
+        const dx = mouse.x - this.x;
+        const dy = mouse.y - this.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const maxDistance = 200;
+
+        if (distance < maxDistance) {
+          const force = (maxDistance - distance) / maxDistance;
+          const pushX = (dx / distance) * force * 4;
+          const pushY = (dy / distance) * force * 4;
+
+          this.x -= pushX;
+          this.y -= pushY;
+
+          this.size = Math.min(this.size + 0.2, 4);
+        } else {
+          this.size = Math.max(this.size - 0.1, 1);
+        }
+      }
+
+      draw() {
+        if (!ctx) return;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = this.color;
+      }
+    }
+
+    function initParticles() {
+      particles = [];
+      const numberOfParticles = Math.min((canvas!.width * canvas!.height) / 8000, 150);
+      for (let i = 0; i < numberOfParticles; i++) {
+        particles.push(new Particle());
+      }
+    }
+
+    function animate() {
+      ctx!.clearRect(0, 0, canvas!.width, canvas!.height);
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+      }
+      animationFrameId = requestAnimationFrame(animate);
+    }
+
+    // Initialize layout before starting
+    resize();
+    animate();
+
+    return () => {
+      window.removeEventListener('resize', resize);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseout', handleMouseLeave);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 pointer-events-none h-full w-full"
+      style={{ zIndex: 0 }}
+    />
+  );
+}
+
 function HeroSection() {
   const text = 'OmniHub';
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -121,6 +259,7 @@ function HeroSection() {
       className="min-h-screen flex flex-col items-center justify-center px-6 relative z-10"
       style={{ perspective: 1000 }}
     >
+      <HeroParticles />
       <motion.div
         className="max-w-5xl mx-auto text-center"
         style={{ x: xTransform, y: yTransform }}
